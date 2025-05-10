@@ -1,0 +1,173 @@
+<%- include("partials/header.ejs") %>
+
+
+
+<div class="px-4 py-5 my-5 text-center"> 
+    <svg xmlns="http://www.w3.org/2000/svg" width="102" height="137" fill="currentColor" class="bi bi-cloud-plus text-success" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5"/>
+        <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
+    </svg>
+    <h1 class="display-5 fw-bold text-body-emphasis">Edit </h1> 
+    <div class="col-lg-6 mx-auto"> 
+        <p class="lead mb-4">Make your changes here..
+        </p> 
+    </div> 
+</div>
+
+<div class="container">
+    <form id="editbookform" action="/posteditedbook" method="POST">
+
+        <input id="editbookid" name="editbookid" value="<%=bookdata.id %>" hidden>
+
+        <label for="editbooktitle" class="form-label">Book Title: </label></br>
+        <h2 id="editqbooktitle" ><%= bookdata.title %></h2>
+        <input id="editbooktitle" name="editbooktitle"  hidden>
+
+        <label for="editbookauthor" class="form-label">Book Author: </label></br>
+        <h2 id="editqbookauthor" ></h2>
+        <input id="editbookauthor" name="editbookauthor"  hidden>
+
+        <label for="editbooksummary" class="form-label">Brief Summary: </label></br>
+        <p id="editqbooksummary"></p>
+        <textarea id="editbooksummary" name="editbooksummary"  hidden></textarea>
+    
+        <label for="editrating">Rating: </label>
+        <select id="editrating" name="editrating" class="form-select" aria-label="Default select example"  >
+        <option value="" disabled>Select a rating</option>
+        <option value="1" <%= (bookdata.rating === 1) ? "selected": "" %> >One</option>
+        <option value="2" <%= (bookdata.rating === 2) ? "selected": ""  %> >Two</option>
+        <option value="3" <%= (bookdata.rating === 3) ? "selected": ""  %> >Three</option>
+        <option value="4" <%= (bookdata.rating === 4) ? "selected": ""  %> >Four</option>
+        <option value="5" <%= (bookdata.rating === 5) ? "selected" : "" %> >Five</option>
+        <option value="6" <%= (bookdata.rating === 6) ? "selected": ""  %> >Six</option>
+        <option value="7" <%= (bookdata.rating === 7) ? "selected": ""  %>>Seven</option>
+        <option value="8" <%= (bookdata.rating === 8) ? "selected": ""  %> >Eight</option>
+        <option value="9" <%= (bookdata.rating === 9) ? "selected": ""  %> >Nine</option>
+        <option value="10" <%= (bookdata.rating === 10) ? "selected" : "" %> >Ten</option>
+        </select>
+    
+
+    </div>
+    <div class="container d-flex align-items-center justify-content-sm-center">
+
+    <button id="editbooksubmitbtn" type="submit" class="btn btn-primary  g-4 m-4">Submit Edit</button>
+    <a href="/" class="btn btn-secondary g-4 m-4" >Cancel</a>
+    </div>
+    </form>
+</div>
+
+<script>
+    const editqbooktitle = new Quill('#editqbooktitle', {
+    modules: { toolbar: false },
+    theme: 'bubble',
+    placeholder: "Enter your book title" 
+    });
+
+    editqbooktitle.setText('<%= bookdata.title %>');
+
+    const editqbookauthor = new Quill('#editqbookauthor', {
+    modules: { toolbar: false },
+    theme: 'bubble',
+    placeholder: "Enter your book author"
+    });
+
+    editqbookauthor.setText('<%= bookdata.author %>');
+
+    const editqbooksummary = new Quill('#editqbooksummary', {
+    modules: { toolbar: true },
+    theme: 'bubble',
+    placeholder: "Enter a brief summary for the book"
+    });
+
+    editqbooksummary.clipboard.dangerouslyPasteHTML('<%= bookdata.summary %>');
+
+    // Noting down the orginal border styles for passing validation after initially failing
+    const editorgqtborder = document.getElementById("editqbooktitle").style.border;
+    const editorgqaborder = document.getElementById("editqbookauthor").style.border;
+    const editorgqsborder = document.getElementById("editqbooksummary").style.border;
+    const editorgratingborder = document.getElementById("editrating").style.border;
+
+    
+    document.getElementById("editbookform").addEventListener('submit', (e) =>{
+      
+      // This gets the text inside quill containers without any of the HTML tags and removes trailing spaces
+      var editqbt = editqbooktitle.getText().trim();
+      var editqba = editqbookauthor.getText().trim();
+      var editqbs = editqbooksummary.getText().trim();
+      
+      console.log("new book submit btn was clicked");
+      
+
+
+      
+    
+
+          document.getElementById("editqbooktitle").style.border = editorgqtborder;
+          document.getElementById("editqbookauthor").style.border = editorgqaborder;
+          document.getElementById("editqbooksummary").style.border = editorgqsborder;
+          document.getElementById("editrating").style.border = editorgratingborder;
+          
+          let empty = false;
+
+          if (editqbt.length === 0) {
+              empty = true;
+              e.preventDefault();
+              document.getElementById("editqbooktitle").style.border = "red 2px solid";
+              alert("A book title must be entered");
+              
+          }
+          
+
+          if (editqba.length === 0) {
+              empty = true;
+              e.preventDefault();
+              document.getElementById("editqbookauthor").style.border = "red 2px solid";
+              alert("Please enter an author for the book");
+              
+          }
+
+          if (editqbs.length === 0) {
+              empty = true;
+              e.preventDefault();
+              document.getElementById("editqbooksummary").style.border = "red 2px solid";
+              alert("Please enter a brief summary for the book");
+              
+          }
+          
+          if (editrating.value === "") {
+              empty = true;
+              e.preventDefault();
+              document.getElementById("editrating").style.border = "red 2px solid";
+              alert("Please enter a rating for the book");
+              
+          }
+              
+          if (empty) { return; } else{
+          document.getElementById("editqbooktitle").style.border = editorgqtborder;
+          document.getElementById("editqbookauthor").style.border = editorgqaborder;
+          document.getElementById("editqbooksummary").style.border = editorgqsborder;  
+          document.getElementById("editrating").style.border = editorgratingborder;    
+
+          document.getElementById("editbooktitle").value = editqbt;
+          document.getElementById("editbookauthor").value = editqba;
+          document.getElementById("editbooksummary").value = editqbooksummary.root.innerHTML;
+          
+          }
+
+    })
+
+  </script>
+  <style>
+    #editor {
+      height: 200px;
+      background-color: white;
+    }
+
+    .ql-bubble {
+      border: lightgrey 1px solid;
+    }
+  </style>
+
+
+
+<%- include("partials/header.ejs") %>

@@ -1,0 +1,21 @@
+{
+  "name": "section-34-capstone-project---book-notes",
+  "version": "1.0.0",
+  "description": "Book Notes Capstone Project",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Adarsh Raju",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.9.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "pg": "^8.15.6",
+    "sanitize-html": "^2.16.0"
+  }
+}

@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# Temporary or backup files
+*.swp
+*.bak
+*~
+
+# Word temp files 
+~$*

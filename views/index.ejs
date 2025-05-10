@@ -1,0 +1,139 @@
+<%- include("partials/header.ejs") %>
+  
+        
+    <!-- #region The intro/heading/hero section of the website -->
+    
+
+
+    <div class="px-4 py-5 my-5 text-center">
+        <!-- <img class="d-block mx-auto mb-4 text-success" fill="currentColor" src="/book-half.svg" alt="" width="72" height="57"> -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="72" height="57" fill="currentColor" class="bi bi-book-half text-success" viewBox="0 0 16 16">
+            <path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/>
+          </svg>
+        <h1 class="display-5 fw-bold text-dark">Book Notes Project</h1>
+        <div class="col-lg-6 mx-auto">
+          <p class="lead mb-4 text-primary">Keep track of all the books you've read, make notes on them, give them a rating and sort the list by posting date or by rating.</p>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <!-- <button type="button" class="btn btn-success  btn-lg px-4 gap-3" data-bs-toggle="modal" data-bs-target="#addNewBookModal">+ New Book Review</button> -->
+            <a href="/addnewbookpage" class="btn btn-success  btn-lg px-4 gap-3" >+ New Book Review</a>
+            
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4" data-bs-toggle="modal" data-bs-target="#sortModal" >Sort <% if(sorted){ %>
+              <img src="./sort-down.svg" alt="sortdown icon"><% }%>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- #endregion The intro/heading/hero section of the website-->
+    <hr>
+
+
+    <!-- #region This section has all the books listed dynamically from the SQL database-->
+    <section class="container">
+      
+
+    <div class="album py-5 bg-body-tertiary">
+      <div class="container">
+  
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+          <!-- The book items start from the div with col class -->
+          <% for (let i=0; i<dbdata.length; i++) {%>
+            <div class="col" id="bookitemno_<%=i%>" >
+              <div class="card shadow-sm pt-5 ps-2">
+                <a href="https://covers.openlibrary.org/b/isbn/<%=dbdata[i].isbn %>-L.jpg"> <img src="https://covers.openlibrary.org/b/isbn/<%=dbdata[i].isbn %>-L.jpg" alt="cover picture for <%= dbdata[i].title %>" class="card-img-top" style="height: 225px; object-fit: contain;" ></a>
+                <div class="card-body">
+                  <h3> <span><%= dbdata[i].title %> </span> By <span><%= dbdata[i].author %> </span></h3>
+                  <div class="d-flex"><h4>Rating: &nbsp; </h4> <span> <%= dbdata[i].rating %></span> / 10 </div>
+                  <p class="card-text"><%- dbdata[i].summary %></p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <a href="/editbook/<%=dbdata[i].id %>" class="btn btn-sm btn-outline-secondary" data-bookidno="<%=dbdata[i].id%>">Edit</a>
+                      
+                      <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<%=dbdata[i].id %>" data-title="<%=dbdata[i].title %>">Delete</button>
+                      
+                    </div>
+                    <small class="text-body-secondary ps-3">Last updated: <%= dbdata[i].date %></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+
+    </section>
+
+
+    <!-- #endregion This section has all the books listed dynamically from the SQL database-->
+
+    <!--#region sortModal -->
+<div class="modal fade" id="sortModal" tabindex="-1" aria-labelledby="sortModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="sortModalLabel">Sort By</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <form id="sortform" action="/sort" method="POST">
+        
+    
+        <label for="sortby">Sort By: </label>
+        <select id="sortby" name="sortby" class="form-select" aria-label="Default select example"  >
+        <option value="" selected disabled>Select</option>
+        <option value="title">Book Title</option>
+        <option value="author">Author</option>
+        <option value="time">Last Modified</option>
+        <option value="rating">Rating</option>
+        
+        </select>
+    
+
+    </div>
+    <div class="container d-flex align-items-center justify-content-sm-center">
+
+    <button id="Sortsubmitbtn" type="submit" class="btn btn-primary  g-4 m-4">Apply Sort</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+    </form>
+      </div>      
+    </div>
+  </div>
+<!--#endregion sortModal -->
+
+
+<!--#region deleteModal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteModalLabel">Delete</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h2 id="delconfirmationheading"></h2>
+      
+    </div>
+    <div class="container d-flex align-items-center justify-content-sm-center">
+
+    <a id="delsubmitbtn"  class="btn btn-primary  g-4 m-4">Yes</a>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    <script>
+      const delmodal = document.getElementById("deleteModal");
+      delmodal.addEventListener("show.bs.modal", (e) =>{
+      var deltriggerbtn = e.relatedTarget;
+      document.getElementById("delconfirmationheading").innerText = `Are you sure you want to delete ${deltriggerbtn.dataset.title}?`;
+      document.getElementById("delsubmitbtn").setAttribute("href", `/delete/${deltriggerbtn.dataset.id}`);
+      })
+    </script>
+    </div>
+      </div>      
+    </div>
+  </div>
+<!--#endregion deleteModal -->
+
+</div>
+
+    <%- include("partials/footer.ejs") %>
