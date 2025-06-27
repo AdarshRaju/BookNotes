@@ -79,7 +79,7 @@
     placeholder: "Enter a brief summary for the book"
     });
 
-    editqbooksummary.clipboard.dangerouslyPasteHTML('<%= bookdata.summary %>');
+    editqbooksummary.clipboard.dangerouslyPasteHTML('<%- bookdata.summary %>');
 
     // Noting down the orginal border styles for passing validation after initially failing
     const editorgqtborder = document.getElementById("editqbooktitle").style.border;

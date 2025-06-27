@@ -3,19 +3,24 @@ import pg from 'pg';
 import ejs from 'ejs';
 import axios from 'axios';
 import sanitizeHtml from 'sanitize-html';
+import env from "dotenv";
 
 const app = express();
 const port = 3000;
+env.config();
 
 app.use(express.static("public"));
 app.use(express.urlencoded({extended: true}));
 
+
 const db = new pg.Client({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'permalist',
-    password: 'yoyohoneysing',
-    port: 5432
+    user: process.env.SQL_USER,
+    host: process.env.SQL_HOST,
+    database: process.env.SQL_DATABASE,
+    password: process.env.SQL_PASSWORD,
+    port: process.env.SQL_PORT,
+    pool_mode: process.env.SQL_MODE
+   
 });
 
 db.connect();
@@ -39,9 +44,12 @@ app.get("/", async (req, res) => {
         dbquery = "ORDER BY author ASC";
         break;
     }
-
-    
-    const dbresult = await db.query(`SELECT * FROM bookreviewlist ${dbquery}`);
+    let dbresult;
+    if (dbquery){
+     dbresult = await db.query(`SELECT * FROM bookreviewlist ${dbquery}`);
+    } else {
+     dbresult = await db.query(`SELECT * FROM bookreviewlist`);
+    }
     // console.log("The data fetched from the db is: ", dbresult.rows);
     res.render("index.ejs", {dbdata: dbresult.rows, sorted: sortval});
 })
@@ -53,7 +61,7 @@ app.get("/addnewbookpage", (req, res) =>{
 app.get("/editbook/:id", async (req, res) =>{
     const bookid = sanitizeHtml(req.params.id);
     console.log("The book id received is: ", bookid);
-    const editdbresult = await db.query(`SELECT * FROM bookreviewlist WHERE id = ${bookid}`);
+    const editdbresult = await db.query(`SELECT * FROM bookreviewlist WHERE id = $1`, [bookid]);
     console.log("The book title db result for edit is: ", editdbresult.rows[0].title);
     res.render("editbook.ejs", {bookdata: editdbresult.rows[0]});
 
