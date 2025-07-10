@@ -3,14 +3,25 @@
         
     <!-- #region The intro/heading/hero section of the website -->
     
-
+<nav class="py-2 bg-body-tertiary border-bottom"> 
+    <div class="container d-flex flex-wrap"> 
+        <ul class="nav me-auto"> 
+            <li class="nav-item"><a href="/" class="nav-link link-body-emphasis px-2 active" aria-current="page">Home</a></li> 
+            <li class="nav-item"><a href="/about" class="nav-link link-body-emphasis px-2">About</a></li> 
+        </ul> 
+        
+        <ul class="nav">                 
+            <li class="nav-item"><a href="/users/logout" class="nav-link link-body-emphasis px-2">Log Out</a></li> 
+        </ul> 
+    </div> 
+</nav>
 
     <div class="px-4 py-5 my-5 text-center">
         <!-- <img class="d-block mx-auto mb-4 text-success" fill="currentColor" src="/book-half.svg" alt="" width="72" height="57"> -->
         <svg xmlns="http://www.w3.org/2000/svg" width="72" height="57" fill="currentColor" class="bi bi-book-half text-success" viewBox="0 0 16 16">
             <path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/>
           </svg>
-        <h1 class="display-5 fw-bold text-dark">Book Notes Project</h1>
+        <h1 class="display-5 fw-bold text-dark">Book Notes</h1>
         <div class="col-lg-6 mx-auto">
           <p class="lead mb-4 text-primary">Keep track of all the books you've read, make notes on them, give them a rating and sort the list by posting date or by rating.</p>
           <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
@@ -18,7 +29,7 @@
             <a href="/addnewbookpage" class="btn btn-success  btn-lg px-4 gap-3" >+ New Book Review</a>
             
             <button type="button" class="btn btn-outline-secondary btn-lg px-4" data-bs-toggle="modal" data-bs-target="#sortModal" >Sort <% if(sorted){ %>
-              <img src="./sort-down.svg" alt="sortdown icon"><% }%>
+              <img src="/sort-down.svg" alt="sortdown icon"><% }%>
             </button>
           </div>
         </div>
@@ -41,14 +52,33 @@
               <div class="card shadow-sm pt-5 ps-2">
                 <a href="https://covers.openlibrary.org/b/isbn/<%=dbdata[i].isbn %>-L.jpg"> <img src="https://covers.openlibrary.org/b/isbn/<%=dbdata[i].isbn %>-L.jpg" alt="cover picture for <%= dbdata[i].title %>" class="card-img-top" style="height: 225px; object-fit: contain;" ></a>
                 <div class="card-body">
-                  <h3> <span><%= dbdata[i].title %> </span> By <span><%= dbdata[i].author %> </span></h3>
-                  <div class="d-flex"><h4>Rating: &nbsp; </h4> <span> <%= dbdata[i].rating %></span> / 10 </div>
-                  <p class="card-text"><%- dbdata[i].summary %></p>
+                  <h3><a href="/bookview/<%=dbdata[i].id %>" class="text-success" style="text-decoration: none;"><span><%= dbdata[i].title %> </span></a> </h3>
+                    <span > By <strong><%= dbdata[i].author %></strong> </span>
+                  <div class="d-flex"><strong class="text-primary">Rating: &nbsp; </strong> <span> <%= dbdata[i].rating %></span> / 10 </div>
+                  
+                    <div id="wall-rating-display">
+                <% var rat = parseInt(dbdata[i].rating);
+                    var noofwholestars = Math.floor(rat/2);
+                    var noofhalfstars = rat%2;
+                    for (let i=1; i<=5; i++){
+                       if (i <= noofwholestars){ %>
+                        <i class="fas fa-star text-warning"></i>
+                       <% } else if (noofhalfstars > 0) { %>
+                        <i class="fas fa-star-half-alt text-warning"></i>
+                        <% noofhalfstars = 0;
+                       } else { %>
+                        <i class="far fa-star text-warning"></i>
+                      <%  }
+                       } %>
+                </div>
+            
+                  
+                  <div id="collectionsummary" class="mt-5"><%- dbdata[i].summary %></div>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
                       <a href="/editbook/<%=dbdata[i].id %>" class="btn btn-sm btn-outline-secondary" data-bookidno="<%=dbdata[i].id%>">Edit</a>
                       
-                      <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<%=dbdata[i].id %>" data-title="<%=dbdata[i].title %>">Delete</button>
+                      <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="<%=dbdata[i].id %>" data-title="<%=dbdata[i].title %>">Delete</button>
                       
                     </div>
                     <small class="text-body-secondary ps-3">Last updated: <%= dbdata[i].date %></small>
@@ -81,12 +111,19 @@
         
     
         <label for="sortby">Sort By: </label>
-        <select id="sortby" name="sortby" class="form-select" aria-label="Default select example"  >
+        <select id="sortby" name="sortby" class="form-select" aria-label="Default select example" required >
         <option value="" selected disabled>Select</option>
         <option value="title">Book Title</option>
         <option value="author">Author</option>
         <option value="time">Last Modified</option>
         <option value="rating">Rating</option>
+        
+        </select>
+
+        <label for="sortorder">Sort order: </label>
+        <select id="sortorder" name="sortorder" class="form-select" aria-label="Default select example"  >
+        <option value="ascending" selected>Ascending</option>
+        <option value="descending">Descending</option>
         
         </select>
     

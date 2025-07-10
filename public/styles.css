@@ -1,0 +1,31 @@
+body{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* background-color: aqua; */
+}
+
+.back-link {
+  display: inline-block;   /* enables vertical margins */
+  /* margin: -6.5rem 2rem;      tweak to taste */
+  color: var(--bs-link-color, #0dfd21);
+  color: green;
+  width: 7.5rem;
+}
+
+#collectionsummary {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 20px !important;
+    max-height: 50px;
+    
+}
+
+#collectionsummary *{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  
+}
