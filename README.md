@@ -6,4 +6,4 @@ There are options to sort the book entries according to various criteria.
 Bootstrap was used to create the front end, Node.js is used in the backend, PostGreSQL is used to store the database entries.
 
 The live website can be accessed at: https://booknotes-k2dx.onrender.com
-(Email verification during registration is not implemented because this is a demo website. You can register using a random made-up email).
+(Email verification during registration is not implemented because this is a demo website. You can register using a random made-up email such as randomemail@email.com).
